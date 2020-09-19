@@ -3,9 +3,8 @@ package com.example.myapplication
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,12 +13,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        GlobalScope.launch {
-            val networkCallAnswer = doNetworkCall()
-            val networkCallAnswer2 = doNetworkCall2()
+        GlobalScope.launch(Dispatchers.IO) {
+            Log.d(TAG, "Starting coroutine in thread ${Thread.currentThread().name}")
+            val answer = doNetworkCall()
 
-            Log.d(TAG, networkCallAnswer)
-            Log.d(TAG, networkCallAnswer2)
+            withContext(Dispatchers.Main){
+                Log.d(TAG, "Setting text in thread ${Thread.currentThread().name}")
+                tvDummy.text = answer
+            }
+
+            Log.d(TAG, answer)
         }
 
     }
@@ -29,8 +32,5 @@ class MainActivity : AppCompatActivity() {
         return "This is the answer"
     }
 
-    suspend fun doNetworkCall2(): String{
-        delay(3000L)
-        return "This is the answer"
-    }
+
 }
