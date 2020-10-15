@@ -9,30 +9,47 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlin.system.measureTimeMillis
 
+
+data class Person(
+    val name: String = "",
+    val age: Int = -1
+)
 class MainActivity : AppCompatActivity() {
+
+
 
     val TAG = "MAinActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btnStartActivity.setOnClickListener{
-            lifecycleScope.launch {
-                while(true){
-                    delay(1000L)
-                    Log.d(TAG, "Still running")
-                }
-            }
 
-            GlobalScope.launch {
-                delay(5000L)
-                Intent(this@MainActivity, SecondActivity::class.java).also {
-                    startActivity(it)
-                    finish()
 
-                }
+//        getUser1 { user1 ->
+//            getUser2 { user2 ->
+//
+//                getMessages{ messages ->
+//
+//                }
+//            }
+//
+//        }
+
+
+        val tutorialDocument = Firebase.firestore.collection("coroutines")
+            .document("tutorial")
+        val peter = Person("PEter", 25)
+
+        GlobalScope.launch(Dispatchers.IO) {
+            delay(3000L)
+            tutorialDocument.set(peter).await()
+            val person = tutorialDocument.get().await().toObject(Person::class.java)
+            withContext(Dispatchers.Main){
+                tvData.text = person.toString()
             }
         }
+
+
 
 
 
