@@ -1,8 +1,10 @@
 package com.example.myapplication
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlin.system.measureTimeMillis
@@ -14,51 +16,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
-        GlobalScope.launch(Dispatchers.IO) {
-
-            val time = measureTimeMillis {
-//                val answer1 = networkCall1()
-//                val answer2 = networkCall2()
-
-//                var answer1:String ? = null
-//                var answer2:String ? = null
-//                val job1 = launch {
-//                    answer1 = networkCall1()
-//                }
-//                val job2 = launch {
-//                    answer2 = networkCall2()
-//                }
-//
-//                job1.join()
-//                job2.join()
-
-                val answer1 = async { networkCall1() }
-                val answer2 = async { networkCall2() }
-
-                Log.d(TAG, "Answer1 is ${answer1.await()}")
-                Log.d(TAG, "Answer2 is ${answer2.await()}")
+        btnStartActivity.setOnClickListener{
+            lifecycleScope.launch {
+                while(true){
+                    delay(1000L)
+                    Log.d(TAG, "Still running")
+                }
             }
 
-            Log.d(TAG, "Request took is $time")
+            GlobalScope.launch {
+                delay(5000L)
+                Intent(this@MainActivity, SecondActivity::class.java).also {
+                    startActivity(it)
+                    finish()
 
+                }
+            }
         }
 
 
 
-
     }
 
-    suspend fun networkCall1() :String {
-        delay(3000L)
-        return "answer1";
-    }
 
-    suspend fun networkCall2() :String {
-        delay(3000L)
-        return "answer2";
-    }
 
 
 
