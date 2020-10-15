@@ -12,25 +12,31 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        GlobalScope.launch(Dispatchers.IO) {
-            Log.d(TAG, "Starting coroutine in thread ${Thread.currentThread().name}")
-            val answer = doNetworkCall()
-
-            withContext(Dispatchers.Main){
-                Log.d(TAG, "Setting text in thread ${Thread.currentThread().name}")
-                tvDummy.text = answer
+        Log.d(TAG, "Before runbloking")
+        runBlocking {
+            launch(Dispatchers.IO){
+                delay(3000L)
+                Log.d(TAG, "Finished IO Courutine 1")
             }
 
-            Log.d(TAG, answer)
+            launch(Dispatchers.IO){
+                delay(3000L)
+                Log.d(TAG, "Finished IO Courutine 2")
+            }
+
+            Log.d(TAG, "Start of runbloking")
+            delay(5000L)
+            Log.d(TAG, "End of runbloking")
         }
+        Log.d(TAG, "After runbloking")
+
+
+
+
 
     }
 
-    suspend fun doNetworkCall(): String{
-        delay(3000L)
-        return "This is the answer"
-    }
+
 
 
 }
